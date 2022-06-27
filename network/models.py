@@ -25,7 +25,7 @@ class Post(models.Model):
         User, on_delete=models.SET_NULL, null=True, related_name="posts"
     )
     content = models.TextField()
+    liked_by = models.ManyToManyField(User, related_name="likes", blank=True)
     # AutoFields:
     publication_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    liked_by = models.ManyToManyField(User, related_name="likes", blank=True)
