@@ -3,8 +3,8 @@ from django.db import IntegrityError
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
-from .models import User
+from .models import User, Post
+from django.core.paginator import Paginator
 
 
 def following(request):
@@ -20,7 +20,11 @@ def profile(request, user_pk):
 
 
 def index(request):
-    return render(request, "network/index.html")
+    posts_list = Post.objects.all()
+    paginator = Paginator(posts_list, 10)  # Show 10 posts per page.
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(request, "network/index.html", {"page_obj": page_obj})
 
 
 def login_view(request):
