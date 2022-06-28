@@ -1,14 +1,22 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User
 
 
+def following(request):
+    return render(request, "network/index.html")
+
+
 def profile(request, user_pk):
-    return render(request, "network/profile.html")
+    try:
+        req_user = User.objects.get(pk=user_pk)
+    except User.DoesNotExist:
+        raise Http404
+    return render(request, "network/profile.html", {"req_user": req_user})
 
 
 def index(request):
