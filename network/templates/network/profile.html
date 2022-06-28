@@ -1,0 +1,14 @@
+{% extends "network/index.html" %}
+
+{% block body %}
+<div class="flex-column">
+<h2>{{user.username}}</h2>
+<p>Has {{user.number_of_followers}} followers</p>
+<p>Follows {{user.no_of_following}}</p>
+<p>Created {{user.number_of_posts}} posts</p>
+<button class="myBtn">Follow this user (TODO)</button>
+</div>
+
+
+{{ block.super }}
+{% endblock %}
