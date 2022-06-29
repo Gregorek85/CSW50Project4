@@ -1,9 +1,21 @@
 {% extends "network/layout.html" %}
+{%load humanize%}
 {% block body %}
 <div class="flex-column">
 {% for post in page_obj %}
 {# Each "post" is a Post model object. #}
+<div class="flex-column card m-2">
+<div class="card-body">
+<p>{{post.author.username}}</p>
 <p>{{ post.content }}</p>
+{%if post.author == request.user%}
+<button id="edit_{{post.pk}}" class="btn btn-outline-secondary btn-sm">Edit (TODO)</button>
+{%endif%}
+<p>{{ post.publication_datetime|naturaltime}}</p>
+<p><img class="like_btn" id="heart_{{post.pk}}}}" src="/static/network/heart.png">{{post.no_of_likes}}</p>
+<button id="edit_{{comment.pk}}" class="btn btn-outline-secondary btn-sm">Comment (TODO)</button>
+</div>
+</div>
 {% endfor %}
 </div>
 

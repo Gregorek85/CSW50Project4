@@ -32,5 +32,9 @@ class Post(models.Model):
     publication_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
 
+    @property
+    def no_of_likes(self):
+        return self.liked_by.count()
+
     class Meta:
         ordering = ["-publication_datetime"]
