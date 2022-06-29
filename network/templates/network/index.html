@@ -12,8 +12,12 @@
 <button id="edit_{{post.pk}}" class="btn btn-outline-secondary btn-sm">Edit (TODO)</button>
 {%endif%}
 <p>{{ post.publication_datetime|naturaltime}}</p>
-<p><img class="like_btn" id="heart_{{post.pk}}}}" src="/static/network/heart.png">{{post.no_of_likes}}</p>
+<p><img {% if auth_tru %} class="like_btn" {%endif%} id="heart_{{post.pk}}" src="/static/network/heart.png">{{post.no_of_likes}}</p>
+{% if auth_tru %}
 <button id="edit_{{comment.pk}}" class="btn btn-outline-secondary btn-sm">Comment (TODO)</button>
+{%else%}
+<p><a class="link" href="{% url 'login' %}">Log In</a> or <a class="link" href="{% url 'register' %}">register</a> to like & comment posts</p>
+{%endif%}
 </div>
 </div>
 {% endfor %}

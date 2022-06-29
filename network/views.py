@@ -1,10 +1,59 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from .models import User, Post
 from django.core.paginator import Paginator
+from django.http import HttpResponseNotAllowed
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def follow(request, user_pk):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(
+            [
+                "POST",
+            ],
+            "405: Method not allowed. Only 'POST' method is permitted for this resource",
+        )
+    try:
+        req_user = User.objects.get(pk=user_pk)
+    except User.DoesNotExist:
+        raise Http404
+    user = request.user
+    if req_user in user.following.all():
+        user.following.remove(req_user)
+        msg = "Unfollow successfull"
+    else:
+        user.following.add(req_user)
+        msg = "Follow successfull"
+    user.save()
+    return JsonResponse({"msg": msg})
+
+
+@login_required
+def like(request, post_pk):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(
+            [
+                "POST",
+            ],
+            "405: Method not allowed. Only 'POST' method is permitted for this resource",
+        )
+    post = Post.objects.get(post=post_pk)
+    user = request.user
+    if user in post.liked_by.all():
+        post.liked_by.remove(user)
+        msg_addon = "un"
+    else:
+        post.liked_by.add(request.user)
+        msg_addon = ""
+    post.save()
+    return JsonResponse(
+        {"msg": f"Post {post_pk} succesfully {msg_addon}liked by {request.user.pk}"}
+    )
 
 
 def following(request):

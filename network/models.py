@@ -3,8 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-    followed_by = models.ManyToManyField(
-        "self", related_name="follows", symmetrical=False, default=None, blank=True
+    following = models.ManyToManyField(
+        "self", related_name="followed_by", symmetrical=False, default=None, blank=True
     )
 
     @property
@@ -13,7 +13,7 @@ class User(AbstractUser):
 
     @property
     def no_of_following(self):
-        return self.follows.count()
+        return self.following.count()
 
     @property
     def number_of_followers(self):
