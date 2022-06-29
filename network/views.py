@@ -8,7 +8,8 @@ from django.core.paginator import Paginator
 
 
 def following(request):
-    return render(request, "network/index.html")
+    posts_list = Post.objects.filter(author__in=request.user.follows.all())
+    return displayPosts(request, posts_list)
 
 
 def profile(request, user_pk):
@@ -16,15 +17,28 @@ def profile(request, user_pk):
         req_user = User.objects.get(pk=user_pk)
     except User.DoesNotExist:
         raise Http404
-    return render(request, "network/profile.html", {"req_user": req_user})
+    posts_list = Post.objects.filter(author=req_user)
+    page_obj = paginate_posts(request, posts_list)
+    return render(
+        request, "network/profile.html", {"req_user": req_user, "page_obj": page_obj}
+    )
 
 
 def index(request):
     posts_list = Post.objects.all()
+    return displayPosts(request, posts_list)
+
+
+def displayPosts(request, posts_list):
+    page_obj = paginate_posts(request, posts_list)
+    return render(request, "network/index.html", {"page_obj": page_obj})
+
+
+def paginate_posts(request, posts_list):
     paginator = Paginator(posts_list, 10)  # Show 10 posts per page.
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    return render(request, "network/index.html", {"page_obj": page_obj})
+    return page_obj
 
 
 def login_view(request):
